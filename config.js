@@ -13,27 +13,21 @@ const dbCfg = {
   POSTGRES_USER: process.env.POSTGRES_USER || "postgres",
   POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD || "postgres",
   POSTGRES_DB: process.env.POSTGRES_DB || "ams",
-  POSTGRES_HOST: process.env.POSTGRES_HOST || "postgres_db",
+  POSTGRES_HOST: process.env.POSTGRES_HOST || "localhost",
   POSTGRES_PORT: process.env.POSTGRES_PORT || 5432,
 };
 
 // Basic config (all variables are recommended to be left at default)
 const cfg = {
-  APP_PORT: process.env.REACT_APP_PORT || 8080,
+  APP_PORT: process.env.APP_PORT || 8080,
   IS_HTTPS: process.env.IS_HTTPS || true,
   COOKIE_AGE: process.env.COOKIE_AGE || 1000 * 60 * 60 * 24 * 30, // 30 days,
   AUTH_COOKIE_AGE: process.env.AUTH_COOKIE_AGE || 1000 * 60 * 2, // 2 MINUTES,
   BUILD_PATH: process.env.BUILD_PATH || "../frontend/build",
   DATA_API_HOST: process.env.DATA_API_HOST || "http://flask_server:5000",
   DATA_API_VERSION: process.env.DATA_API_VERSION || "v3",
-  USE_SERVER_PUBLIC_URL: process.env.USE_SERVER_PUBLIC_URL || false,
+  // USE_SERVER_PUBLIC_URL: process.env.USE_SERVER_PUBLIC_URL || false,
 };
-
-if (cfg.USE_SERVER_PUBLIC_URL === "true" || cfg.USE_SERVER_PUBLIC_URL === true) {
-  cfg.PUBLIC_URL = process.env.PUBLIC_URL || "/ams";
-} else {
-  cfg.PUBLIC_URL = "";
-}
 
 // Modified config for development/test (not production)
 if (process.env.NODE_ENV !== "production") {

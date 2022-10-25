@@ -1,7 +1,6 @@
 const express = require("express");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
-const path = require("path");
 
 const { debug } = require("console");
 const routes = require("./routes/routes");
@@ -52,15 +51,8 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-// React build is found here
-app.use(`${cfg.PUBLIC_URL}/`, express.static(path.resolve(cfg.BUILD_PATH)));
-
 // Define version routes here
-app.use(`${cfg.PUBLIC_URL}/api/`, routes);
-
-// Setup for react router
-app.get(`${cfg.PUBLIC_URL}*`, (req, res) => {
-  res.status(200).sendFile(path.resolve(`${cfg.BUILD_PATH}/index.html`));
-});
+// app.use(`${cfg.PUBLIC_URL}/api/`, routes);
+app.use("/api/", routes);
 
 app.listen(cfg.APP_PORT, () => console.log(`Listening on port ${cfg.APP_PORT}`));
