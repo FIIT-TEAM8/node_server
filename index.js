@@ -52,7 +52,6 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // Define version routes here
-// app.use(`${cfg.PUBLIC_URL}/api/`, routes);
 app.use("/api/", routes);
 
 app.listen(cfg.APP_PORT, () => console.log(`Listening on port ${cfg.APP_PORT}`));

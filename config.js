@@ -23,10 +23,8 @@ const cfg = {
   IS_HTTPS: process.env.IS_HTTPS || true,
   COOKIE_AGE: process.env.COOKIE_AGE || 1000 * 60 * 60 * 24 * 30, // 30 days,
   AUTH_COOKIE_AGE: process.env.AUTH_COOKIE_AGE || 1000 * 60 * 2, // 2 MINUTES,
-  BUILD_PATH: process.env.BUILD_PATH || "../frontend/build",
   DATA_API_HOST: process.env.DATA_API_HOST || "http://flask_server:5000",
   DATA_API_VERSION: process.env.DATA_API_VERSION || "v3",
-  // USE_SERVER_PUBLIC_URL: process.env.USE_SERVER_PUBLIC_URL || false,
 };
 
 // Modified config for development/test (not production)
