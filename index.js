@@ -55,3 +55,5 @@ if (process.env.NODE_ENV !== "production") {
 app.use("/api/", routes);
 
 app.listen(cfg.APP_PORT, () => console.log(`Listening on port ${cfg.APP_PORT}`));
+
+module.exports = app;

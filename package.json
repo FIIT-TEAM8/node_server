@@ -6,13 +6,16 @@
   "scripts": {
     "deploy": "node index.js",
     "dev": "nodemon index.js",
-    "lint": "eslint --fix --ext .js ."
+    "lint": "eslint --fix --ext .js .",
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "date-fns": "^2.28.0",
@@ -21,6 +24,7 @@
     "html-pdf-node": "^1.0.8",
     "isomorphic-dompurify": "^0.20.0",
     "jsonwebtoken": "^8.5.1",
+    "mocha": "^10.1.0",
     "moment": "^2.29.1",
     "node-cron": "^3.0.0",
     "node-fetch": "^2.6.7",
