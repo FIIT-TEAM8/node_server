@@ -10,16 +10,18 @@ const db = require("./db/postgres");
 const cron = require("./utils/cron");
 const { attachUser } = require("./middleware/auth");
 
-// Start up connection to DB
-db.getPool();
-
 cron.setup();
 
 const app = express();
 
 app.use(compression());
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "test") {
+  // Start up connection to DB
+  db.getPool();
+}
+
+if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
   console.log("Running a DEVELOPMENT server");
   app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -37,7 +39,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
   app.use(attachUser, async (req, res, next) => {
     // Database demo
     const query = {

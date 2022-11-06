@@ -1,9 +1,10 @@
-// setup and /api test created based on https://stackoverflow.com/questions/46575524/chai-to-test-json-api-output
+// setup + /api test + should assertions created based on https://stackoverflow.com/questions/46575524/chai-to-test-json-api-output
 
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const sinon = require("sinon");
 const fetch = require("node-fetch");
+const db = require("../db/postgres");
 const server = require("../index");
 
 chai.should();
@@ -37,6 +38,31 @@ describe("/api/data/search", () => {
         res.should.have.status(200);
         res.body.should.have.property("ok").eql(true);
         res.body.should.have.property("data").have.property("hello").eql("hello");
+        done();
+      });
+  });
+});
+
+describe("api/user/signup", () => {
+  it("User already exists", (done) => {
+    const username = "Albert";
+    const password = "test123";
+
+    // source: documentation https://sinonjs.org/releases/latest/mocks/#expectations
+    const mockDb = sinon.mock(db);
+    mockDb.expects("query").once().resolves({});
+
+    chai.request(server)
+      .post("/api/user/signup")
+      .send(JSON.stringify({
+        username,
+        password,
+      }))
+      .set("Content-Type", "application/json")
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.have.property("ok").eql(false);
+        res.body.should.have.property("msg").eql("Sign up failed. Username might already be in use.");
         done();
       });
   });

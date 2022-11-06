@@ -7,7 +7,7 @@
     "deploy": "node index.js",
     "dev": "nodemon index.js",
     "lint": "eslint --fix --ext .js .",
-    "test": "mocha"
+    "test": "export NODE_ENV=test && mocha --exit"
   },
   "keywords": [],
   "author": "",
