@@ -1,22 +1,13 @@
 // '/data/*' endpoint
 
 const express = require("express");
-const fetch = require("node-fetch");
-const { cfg } = require("../../config");
+const { apiFetch } = require("../../utils/data_api_tools");
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.status(200).json({ ok: true, data: {}, msg: "Advancer search route is working" });
+  res.status(200).json({ ok: true, data: {}, msg: "Advanced search route is working" });
 });
-
-async function apiFetch(endpoint, req) {
-  const version = req.query.version || cfg.DATA_API_VERSION;
-  const url = `${cfg.DATA_API_HOST}/${version}/${endpoint}`;
-  const response = await fetch(url);
-  const json = response.json();
-  return json;
-}
 
 // node_host /ams/api/advanced_search/keyword_categories
 router.get("/keyword_categories", async (req, res) => {
