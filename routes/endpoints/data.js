@@ -18,7 +18,7 @@ router.get("/search/", async (req, res) => {
   } catch (e) {
     console.log(e);
     console.log("Exception happened while handling: /search");
-    return res.status(500).json({ ok: false, msg: "Something went wrong while forwarding the request" });
+    return res.status(500).json({ ok: false, msg: "Forwarding request to /search failed." });
   }
 });
 
@@ -30,7 +30,7 @@ router.get("/report", async (req, res) => {
   } catch (e) {
     console.log(e);
     console.log("Exception happened while handling: /report");
-    return res.status(500).json({ ok: false, msg: "Something went wrong while forwarding the request" });
+    return res.status(500).json({ ok: false, msg: "Forwarding request to /report failed." });
   }
 });
 
