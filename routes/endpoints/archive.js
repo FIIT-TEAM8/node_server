@@ -1,30 +1,13 @@
 // '/archive/*' endpoint
 
 const express = require("express");
-const fetch = require("node-fetch");
-const { cfg } = require("../../config");
+const { apiFetch } = require("../../utils/data_api_tools");
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
   res.status(200).json({ ok: true, data: {}, msg: "Archive route is working" });
 });
-
-function extractQueryString(req) {
-  const { query } = req;
-  return `?${Object.keys(query)
-    .map((key) => `${key}=${query[key]}`)
-    .join("&")}`;
-}
-
-async function apiFetch(endpoint, req) {
-  const version = req.query.version || cfg.DATA_API_VERSION;
-  const url = `${cfg.DATA_API_HOST}/${version}/${endpoint}${extractQueryString(req)}`;
-  // @ts-ignore
-  const response = await fetch(url);
-  const json = await response.json();
-  return json;
-}
 
 // node_host /ams/api/data/search/
 router.get("/search/", async (req, res) => {
