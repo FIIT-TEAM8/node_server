@@ -1,4 +1,4 @@
-// setup + should assertions created based on https://stackoverflow.com/questions/46575524/chai-to-test-json-api-output
+// setup + inspiration for should assertions: https://stackoverflow.com/questions/46575524/chai-to-test-json-api-output
 
 const sandBox = require("sinon").createSandbox();
 const chai = require("chai");
