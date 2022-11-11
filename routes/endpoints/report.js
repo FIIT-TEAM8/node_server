@@ -3,6 +3,7 @@ const DOMPurify = require("isomorphic-dompurify");
 const htmlToPdf = require("html-pdf-node");
 const reportDb = require("../../db/report_db");
 const dataApiTools = require("../../utils/data_api_tools");
+const { authenticateUser } = require("../../middleware/auth");
 
 const htmlSanitizeOptions = {
   ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p", "span"],
@@ -27,7 +28,7 @@ const pdfOptions = {
 const router = express.Router();
 
 // node_host /ams/api/report/create/:user_id
-router.post("/create", async (req, res) => {
+router.post("/create", authenticateUser, async (req, res) => {
   try {
     const { userId } = req.body;
     const reportContent = JSON.stringify(req.body.articlesInReport); // convert array to json for db
@@ -46,7 +47,7 @@ router.post("/create", async (req, res) => {
 });
 
 // node_host /ams/api/report/update/:id
-router.post("/update/:id", async (req, res) => {
+router.post("/update/:id", authenticateUser, async (req, res) => {
   try {
     const reportId = req.params.id;
     const reportContent = JSON.stringify(req.body.articlesInReport); // convert array to json for db
@@ -64,7 +65,7 @@ router.post("/update/:id", async (req, res) => {
   }
 });
 
-router.post("/download", async (req, res) => {
+router.post("/download", authenticateUser, async (req, res) => {
   try {
     if (!("body" in req && "articlesIds" in req.body && "articlesSearchTerms" in req.body)) {
       return res.status(400).json({ ok: false, msg: "Wrong request, missing articles ids or search terms." });
@@ -131,7 +132,7 @@ router.post("/download", async (req, res) => {
 
 // node_host /ams/api/report/:id?status=In Progres
 // get report based on user_id and report status
-router.get("/:user_id", async (req, res) => {
+router.get("/:user_id", authenticateUser, async (req, res) => {
   try {
     const userId = req.params.user_id;
     const reportStatus = ("status" in req.query) ? req.query.status : "In Progress";
