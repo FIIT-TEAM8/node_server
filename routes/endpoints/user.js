@@ -49,15 +49,15 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const user = await userdb.getUser(req.body.username);
-  const cookieAge = req.body.maxCookieAge || 60 * 60 * 24; // 1 day default (60s * 60m * 24h)
-  debug(`REF_COOKIE_AGE: ${cookieAge}`);
-  debug(`AUTH_COOKIE_AGE: ${cfg.AUTH_COOKIE_AGE}`);
-  if (!user) {
-    return res.status(404).json({ ok: false, auth: false, msg: "User does not exist." });
-  }
-
   try {
+    const user = await userdb.getUser(req.body.username);
+    const cookieAge = req.body.maxCookieAge || 60 * 60 * 24; // 1 day default (60s * 60m * 24h)
+    debug(`REF_COOKIE_AGE: ${cookieAge}`);
+    debug(`AUTH_COOKIE_AGE: ${cfg.AUTH_COOKIE_AGE}`);
+    if (!user) {
+      return res.status(404).json({ ok: false, auth: false, msg: "User does not exist." });
+    }
+
     if (await bcrypt.compare(req.body.password, user.password)) {
       const accessToken = generateAccessToken({ username: user.username, id: user.id });
       const refToken = jwt.sign(
