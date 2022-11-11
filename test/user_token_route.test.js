@@ -55,14 +55,6 @@ describe("user/token", () => {
       id: 1,
     });
     mockDb.expects("query").resolves({ rows: [{ maxage: 12000 }] });
-    // TODO: this is probably unnecessary
-    mockDb.expects("query").resolves({
-      rows: [{
-        username: "test123",
-        password: "pasword123",
-        id: 1,
-      }],
-    });
 
     const res = await chai.request(server)
       .get("/api/user/token")

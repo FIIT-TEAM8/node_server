@@ -32,9 +32,8 @@ async function refreshToken(req, res, next) {
     res.cookie("__refToken", refToken, { maxAge: refreshTokenMaxAge * 1000, httpOnly: false, secure: cfg.IS_HTTPS });
 
     debug(`Authenticated: ${user.username}`);
-    const dbuser = await getUser(user.username);
-    delete dbuser.password;
-    req.body.user = dbuser;
+    delete user.iat;
+    req.body.user = user; // required???
 
     next();
   } catch (err) {
