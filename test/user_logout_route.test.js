@@ -45,7 +45,3 @@ describe("/user/logout", () => {
     mockDb.verify();
   });
 });
-
-// describe("user/token", () => {
-//   it("", () => {});
-// });
