@@ -54,7 +54,7 @@ router.post("/update/:id", authenticateUser, async (req, res) => {
 
     const result = await reportDb.updateReport(reportId, reportContent);
     if (!result) {
-      return res.status(400).json({ ok: false, msg: "Something failed during updating report." });
+      return res.status(400).json({ ok: false, msg: "Something failed while updating report." });
     }
 
     return res.status(200).json({ ok: true, msg: "Report was succesfully updated." });

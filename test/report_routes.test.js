@@ -35,11 +35,7 @@ describe("/api/report", () => {
 
   it("fail getting report from db", async () => {
     mockDb.expects("query").once().resolves({ rows: [] });
-    mockJWT.expects("verify").once().returns({
-      username: "test123",
-      iat: "test-iat123",
-      id: 1,
-    });
+    mockJWT.expects("verify").once().returns(fakeAuthenticatedData);
 
     const res = await chai.request(server)
       .get("/api/report/1?status=In+Progress")
@@ -127,6 +123,54 @@ describe("/api/report", () => {
     res.should.have.status(200);
     res.body.should.have.property("ok").eql(true);
     res.body.should.have.property("msg").eql("Report was successfully created.");
+    sandBox.verify();
+  });
+
+  it("update report failed, because db didn't return id", async () => {
+    mockJWT.expects("verify").once().returns(fakeAuthenticatedData);
+    mockDb.expects("query").once().resolves({ rowCount: 0 });
+
+    const res = await chai.request(server)
+      .post("/api/report/update/1")
+      .set("Cookie", "__authToken=test123")
+      .set("Content-Type", "application/json")
+      .send(JSON.stringify({ userId: 1, articlesInReport: fakeArticlesInReport }));
+
+    res.should.have.status(400);
+    res.body.should.have.property("ok").eql(false);
+    res.body.should.have.property("msg").eql("Something failed while updating report.");
+    sandBox.verify();
+  });
+
+  it("update report failed, db threw error", async () => {
+    mockJWT.expects("verify").once().returns(fakeAuthenticatedData);
+    mockDb.expects("query").once().throws(error);
+
+    const res = await chai.request(server)
+      .post("/api/report/update/1")
+      .set("Cookie", "__authToken=test123")
+      .set("Content-Type", "application/json")
+      .send(JSON.stringify({ userId: 1, articlesInReport: fakeArticlesInReport }));
+
+    res.should.have.status(500);
+    res.body.should.have.property("ok").eql(false);
+    res.body.should.have.property("msg").eql("Unable to update report.");
+    sandBox.verify();
+  });
+
+  it("report was successfully update", async () => {
+    mockJWT.expects("verify").once().returns(fakeAuthenticatedData);
+    mockDb.expects("query").once().resolves({ rowCount: 1 });
+
+    const res = await chai.request(server)
+      .post("/api/report/update/1")
+      .set("Cookie", "__authToken=test123")
+      .set("Content-Type", "application/json")
+      .send(JSON.stringify({ userId: 1, articlesInReport: fakeArticlesInReport }));
+
+    res.should.have.status(200);
+    res.body.should.have.property("ok").eql(true);
+    res.body.should.have.property("msg").eql("Report was succesfully updated.");
     sandBox.verify();
   });
 });
