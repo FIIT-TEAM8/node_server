@@ -9,8 +9,11 @@ function generateAccessToken(data) {
   return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
 }
 
+// eslint-disable-next-line consistent-return
 async function refreshToken(req, res, next) {
   const refToken = req.cookies.__refToken;
+
+  console.log(refToken);
 
   if (!refToken) {
     return res.sendStatus(401);
@@ -21,13 +24,11 @@ async function refreshToken(req, res, next) {
     return res.sendStatus(403);
   }
 
-  return jwt.verify(refToken, process.env.REFRESH_TOKEN_SECRET, async (err, user) => {
-    if (err) return res.sendStatus(403);
+  try {
+    const user = jwt.verify(refToken, process.env.REFRESH_TOKEN_SECRET);
 
     const accessToken = generateAccessToken({ username: user.username, id: user.id });
-    // @ts-ignore
     res.cookie("__authToken", accessToken, { maxAge: cfg.AUTH_COOKIE_AGE, httpOnly: true, secure: cfg.IS_HTTPS });
-    // @ts-ignore
     res.cookie("__refToken", refToken, { maxAge: refreshTokenMaxAge * 1000, httpOnly: false, secure: cfg.IS_HTTPS });
 
     debug(`Authenticated: ${user.username}`);
@@ -35,8 +36,11 @@ async function refreshToken(req, res, next) {
     delete dbuser.password;
     req.body.user = dbuser;
 
-    return next();
-  });
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(403);
+  }
 }
 
 function authenticateUser(req, res, next) {
