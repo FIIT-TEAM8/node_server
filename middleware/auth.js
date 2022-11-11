@@ -13,8 +13,6 @@ function generateAccessToken(data) {
 async function refreshToken(req, res, next) {
   const refToken = req.cookies.__refToken;
 
-  console.log(refToken);
-
   if (!refToken) {
     return res.sendStatus(401);
   }
@@ -43,19 +41,21 @@ async function refreshToken(req, res, next) {
 }
 
 function authenticateUser(req, res, next) {
-  // const authHeader = req.headers['authorization']
-  // const token = authHeader && authHeader.split(' ')[1]
   const token = req.cookies.__authToken;
   if (!token) {
     return res.sendStatus(401);
   }
 
-  return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
+  try {
+    const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     debug(`Authenticated: ${user.username}`);
-    req.body.user = user;
+    delete user.iat;
+    req.body.user = user; // required???
     return next();
-  });
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(403);
+  }
 }
 
 // If a user is logged in, the data will be in req.body.user
