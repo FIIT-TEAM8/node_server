@@ -12,10 +12,12 @@ chai.use(chaiHttp);
 
 describe("user/token", () => {
   let mockDb;
+  let mockJWT;
 
   beforeEach(() => {
     sandBox.restore();
     mockDb = sandBox.mock(db);
+    mockJWT = sandBox.mock(jwt);
   });
 
   it("fail, beacause of missing token", async () => {
@@ -26,7 +28,7 @@ describe("user/token", () => {
   });
 
   it("fail, when checking refresh token", async () => {
-    mockDb.expects("query").resolves({ rows: [] });
+    mockDb.expects("query").once().resolves({ rows: [] });
 
     const res = await chai.request(server)
       .get("/api/user/token")
@@ -37,24 +39,24 @@ describe("user/token", () => {
   });
 
   it("fail authentication because of fake data", async () => {
-    mockDb.expects("query").resolves({ rows: [{ maxage: 12000 }] });
+    mockDb.expects("query").once().resolves({ rows: [{ maxage: 12000 }] });
+    mockJWT.expects("verify").once().throws(new Error("test error"));
 
     const res = await chai.request(server)
       .get("/api/user/token")
       .set("Cookie", "__refToken=test123");
 
     res.should.have.status(403);
-    mockDb.verify();
+    sandBox.verify();
   });
 
   it("successful authetication with token", async () => {
-    const jwtVerifyStub = sandBox.stub(jwt, "verify");
-    jwtVerifyStub.returns({
+    mockJWT.expects("verify").once().returns({
       username: "test123",
       password: "test-password",
       id: 1,
     });
-    mockDb.expects("query").resolves({ rows: [{ maxage: 12000 }] });
+    mockDb.expects("query").once().resolves({ rows: [{ maxage: 12000 }] });
 
     const res = await chai.request(server)
       .get("/api/user/token")
@@ -62,5 +64,6 @@ describe("user/token", () => {
 
     res.should.have.status(200);
     res.body.should.have.property("ok").eql(true);
+    sandBox.verify();
   });
 });
