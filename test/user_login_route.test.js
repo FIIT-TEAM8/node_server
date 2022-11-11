@@ -43,6 +43,8 @@ describe("/user/login", () => {
     res.body.should.have.property("ok").eql(true);
     res.body.should.have.property("auth").eql(true);
     res.body.should.have.property("msg").eql("Logged in.");
+    res.body.should.have.property("accessToken");
+    res.body.should.have.property("refToken");
     mockDb.verify();
   });
 
