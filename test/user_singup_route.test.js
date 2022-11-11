@@ -79,11 +79,3 @@ describe("/user/signup", () => {
       });
   });
 });
-
-// describe("/user/logout", () => {
-//   it("", () => {});
-// });
-
-// describe("user/token", () => {
-//   it("", () => {});
-// });
