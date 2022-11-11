@@ -22,7 +22,10 @@ describe("/api/report", () => {
     id: 1,
   };
 
-  const fakeArticlesInReport = ["6240f3e3fcf239665d512756", "62709aceabf5bf8856f1a62f"];
+  const fakeArticlesInReport = [
+    "6240f3e3fcf239665d512756",
+    "62709aceabf5bf8856f1a62f",
+  ];
 
   beforeEach(() => {
     sandBox.restore();
@@ -76,6 +79,54 @@ describe("/api/report", () => {
     res.body.should.have.property("ok").eql(true);
     res.body.should.have.property("msg").eql("Report was successfully retrieved.");
     res.body.should.have.property("articlesInReport").eql(fakeArticlesInReport);
+    sandBox.verify();
+  });
+
+  it("create report failed, db didn't return report id", async () => {
+    mockJWT.expects("verify").once().returns(fakeAuthenticatedData);
+    mockDb.expects("query").once().resolves({});
+
+    const res = await chai.request(server)
+      .post("/api/report/create")
+      .set("Cookie", "__authToken=test123")
+      .set("Content-Type", "application/json")
+      .send(JSON.stringify({ userId: 1, articlesInReport: fakeArticlesInReport }));
+
+    res.should.have.status(400);
+    res.body.should.have.property("ok").eql(false);
+    res.body.should.have.property("msg").eql("Creation of report failed.");
+    sandBox.verify();
+  });
+
+  it("create report failed, db throw error", async () => {
+    mockJWT.expects("verify").once().returns(fakeAuthenticatedData);
+    mockDb.expects("query").once().throws(error);
+
+    const res = await chai.request(server)
+      .post("/api/report/create")
+      .set("Cookie", "__authToken=test123")
+      .set("Content-Type", "application/json")
+      .send(JSON.stringify({ userId: 1, articlesInReport: fakeArticlesInReport }));
+
+    res.should.have.status(500);
+    res.body.should.have.property("ok").eql(false);
+    res.body.should.have.property("msg").eql("Unable to create report.");
+    sandBox.verify();
+  });
+
+  it("report was successfully created", async () => {
+    mockJWT.expects("verify").once().returns(fakeAuthenticatedData);
+    mockDb.expects("query").once().resolves({ rows: [{ id: 1 }] });
+
+    const res = await chai.request(server)
+      .post("/api/report/create")
+      .set("Cookie", "__authToken=test123")
+      .set("Content-Type", "application/json")
+      .send(JSON.stringify({ userId: 1, articlesInReport: fakeArticlesInReport }));
+
+    res.should.have.status(200);
+    res.body.should.have.property("ok").eql(true);
+    res.body.should.have.property("msg").eql("Report was successfully created.");
     sandBox.verify();
   });
 });

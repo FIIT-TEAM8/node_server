@@ -38,7 +38,7 @@ router.post("/create", authenticateUser, async (req, res) => {
       return res.status(400).json({ ok: false, msg: "Creation of report failed." });
     }
 
-    return res.status(200).json({ ok: true, reportId: id, msg: "Creation of report was succesfull." });
+    return res.status(200).json({ ok: true, reportId: id, msg: "Report was successfully created." });
   } catch (e) {
     console.log(e);
     console.log("Exception happened while handling: /report/add");
