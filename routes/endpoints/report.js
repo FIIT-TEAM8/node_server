@@ -71,8 +71,7 @@ router.post("/download", authenticateUser, async (req, res) => {
       return res.status(400).json({ ok: false, msg: "Wrong request, missing articles ids or search terms." });
     }
 
-    const { articlesIds } = req.body;
-    const { articlesSearchTerms } = req.body;
+    const { articlesIds, articlesSearchTerms } = req.body;
     const data = await dataApiTools.fetchArticles("report", req, articlesIds);
 
     if (!data || !("results" in data)) {
@@ -126,7 +125,7 @@ router.post("/download", authenticateUser, async (req, res) => {
   } catch (e) {
     console.log(e);
     console.log("Exception happend while handling: /report/download");
-    return res.status(500).json({ ok: false, msg: "Unable to generate report." });
+    return res.status(500).json({ ok: false, msg: "Unable to generate PDF from articles in report." });
   }
 });
 
