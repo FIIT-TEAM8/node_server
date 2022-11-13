@@ -10,11 +10,17 @@ chai.should();
 chai.use(chaiHttp);
 
 describe("/api/archive/search", () => {
+  let fetchStub;
+
+  beforeEach(() => {
+    fetchStub = sandBox.stub(fetch, "Promise");
+  });
+
   afterEach(() => {
     sandBox.restore();
   });
 
-  it("valid response with fake data", (done) => {
+  it("valid response with fake data", async () => {
     const fakeArticleData = {
       _id: "627341fb4ec0a74b7ab83632",
       html: "scraped html",
@@ -33,41 +39,39 @@ describe("/api/archive/search", () => {
     };
 
     // source: https://stackoverflow.com/questions/43960646/testing-mocking-node-fetch-dependency-that-it-is-used-in-a-class-method
-    sandBox.stub(fetch, "Promise").returns(Promise.resolve(responseObject));
+    fetchStub.returns(Promise.resolve(responseObject));
 
-    chai.request(server)
-      .get("/api/archive/search?link=https://www.test.example.com")
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.have.property("ok").eql(true);
-        res.body.should.have.property("msg").eql("Data sent.");
-        res.body.should.have.property("data").to.be.an("object").eql(fakeArticleData);
-        done();
-      });
+    const res = await chai.request(server)
+      .get("/api/archive/search?link=https://www.test.example.com");
+
+    res.should.have.status(200);
+    res.body.should.have.property("ok").eql(true);
+    res.body.should.have.property("msg").eql("Data sent.");
+    res.body.should.have.property("data").to.be.an("object").eql(fakeArticleData);
+
+    sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("fail fetch, throws error", (done) => {
+  it("fail fetch, throws error", async () => {
     const error = new Error("test error");
-    sandBox.stub(fetch, "Promise").throws(error);
+    fetchStub.throws(error);
 
-    chai.request(server)
-      .get("/api/archive/search?link=https://www.hello.world.com")
-      .end((err, res) => {
-        res.should.have.status(500);
-        res.body.should.have.property("ok").eql(false);
-        res.body.should.have.property("msg").eql("The requested article could not be found.");
-        done();
-      });
+    const res = await chai.request(server)
+      .get("/api/archive/search?link=https://www.hello.world.com");
+
+    res.should.have.status(500);
+    res.body.should.have.property("ok").eql(false);
+    res.body.should.have.property("msg").eql("The requested article could not be found.");
+
+    sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("link parameter not provided", (done) => {
-    chai.request(server)
-      .get("/api/archive/search")
-      .end((err, res) => {
-        res.should.have.status(400);
-        res.body.should.have.property("ok").eql(false);
-        res.body.should.have.property("msg").eql("No search parameters provided.");
-        done();
-      });
+  it("link parameter not provided", async () => {
+    const res = await chai.request(server)
+      .get("/api/archive/search");
+
+    res.should.have.status(400);
+    res.body.should.have.property("ok").eql(false);
+    res.body.should.have.property("msg").eql("No search parameters provided.");
   });
 });
