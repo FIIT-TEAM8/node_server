@@ -11,7 +11,7 @@ const server = require("../index");
 chai.should();
 chai.use(chaiHttp);
 
-describe("/user/login", () => {
+describe("/api/user/login", () => {
   let mockDb;
 
   const error = new Error("Test error");

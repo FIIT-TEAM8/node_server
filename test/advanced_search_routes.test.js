@@ -22,11 +22,10 @@ describe("/api/advanced_search", () => {
     sandBox.restore();
   });
 
-  it("region_mapping valid response", async () => {
+  it("/region_mapping valid response", async () => {
     const fakeCrimes = ["crime", "crime"];
 
     const responseObject = {
-      // eslint-disable-next-line quote-props
       json: () => ({
         category1: fakeCrimes,
         category2: fakeCrimes,
@@ -46,7 +45,7 @@ describe("/api/advanced_search", () => {
     sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("region mapping fail fetch and throw error", async () => {
+  it("/region_mapping fail fetch throw error", async () => {
     fetchStub.throws(error);
 
     const res = await chai.request(server)
@@ -59,7 +58,7 @@ describe("/api/advanced_search", () => {
     sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("keyword categories valid response", async () => {
+  it("/keyword_categories valid response", async () => {
     const responseObject = {
       // eslint-disable-next-line quote-props
       json: () => ({ "Slovakia": "sk", "United States": "us" }),
@@ -78,7 +77,7 @@ describe("/api/advanced_search", () => {
     sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("keyword categories fail fetch and throw error", async () => {
+  it("/keyword_categories failed fetch throw error", async () => {
     fetchStub.throws(error);
 
     const res = await chai.request(server)

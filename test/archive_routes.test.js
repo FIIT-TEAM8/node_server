@@ -20,7 +20,7 @@ describe("/api/archive/search", () => {
     sandBox.restore();
   });
 
-  it("valid response with fake data", async () => {
+  it("/archive/search valid response with fake data", async () => {
     const fakeArticleData = {
       _id: "627341fb4ec0a74b7ab83632",
       html: "scraped html",
@@ -52,7 +52,7 @@ describe("/api/archive/search", () => {
     sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("fail fetch, throws error", async () => {
+  it("/archive/search fail fetch throw error", async () => {
     const error = new Error("test error");
     fetchStub.throws(error);
 
@@ -66,7 +66,7 @@ describe("/api/archive/search", () => {
     sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("link parameter not provided", async () => {
+  it("/archive/search link parameter not provided", async () => {
     const res = await chai.request(server)
       .get("/api/archive/search");
 
