@@ -37,7 +37,7 @@ describe("/user/login", () => {
     const defaultMaxAge = 86400;
     const refreshToken = "27a7c3b92385425199c6edfe771b24e3";
     const accessToken = "a529a756858f079b7859a246d90644b5";
-    const hashedPassword = await bcrypt.hash(password, 10).then();
+    const hashedPassword = await bcrypt.hash(password, 10);
     // returns user's hashed password
     mockDb.expects("query").once().withArgs(getUserArgsMatch)
       .resolves({ rows: [{ id: userId, username, password: hashedPassword }] });
