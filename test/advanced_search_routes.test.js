@@ -33,7 +33,7 @@ describe("/api/advanced_search", () => {
       }),
     };
 
-    fetchStub.returns(Promise.resolve(responseObject));
+    fetchStub.resolves(responseObject);
 
     const res = await chai.request(server)
       .get("/api/advanced_search/region_mapping");
@@ -65,7 +65,7 @@ describe("/api/advanced_search", () => {
       json: () => ({ "Slovakia": "sk", "United States": "us" }),
     };
 
-    fetchStub.returns(Promise.resolve(responseObject));
+    fetchStub.resolves(responseObject);
 
     const res = await chai.request(server)
       .get("/api/advanced_search/keyword_categories");

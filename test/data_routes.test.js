@@ -46,7 +46,7 @@ describe("/api/data/search", () => {
     };
 
     // source: https://stackoverflow.com/questions/43960646/testing-mocking-node-fetch-dependency-that-it-is-used-in-a-class-method
-    fetchStub.returns(Promise.resolve(responseObject));
+    fetchStub.resolves(responseObject);
 
     const res = await chai.request(server)
       .get("/api/data/search?q=test+example");
@@ -115,7 +115,7 @@ describe("/api/data/report", () => {
       }),
     };
 
-    fetchStub.returns(Promise.resolve(responseObject));
+    fetchStub.resolves(responseObject);
 
     const res = await chai.request(server)
       .get("/api/data/search?ids=[6239b1eddf4b7decb33fbaf2]");

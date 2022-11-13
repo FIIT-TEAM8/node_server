@@ -39,7 +39,7 @@ describe("/api/archive/search", () => {
     };
 
     // source: https://stackoverflow.com/questions/43960646/testing-mocking-node-fetch-dependency-that-it-is-used-in-a-class-method
-    fetchStub.returns(Promise.resolve(responseObject));
+    fetchStub.resolves(responseObject);
 
     const res = await chai.request(server)
       .get("/api/archive/search?link=https://www.test.example.com");
