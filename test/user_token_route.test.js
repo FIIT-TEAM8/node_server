@@ -11,6 +11,9 @@ chai.should();
 chai.use(chaiHttp);
 
 describe("user/token", () => {
+  const refToken = "test123";
+  const checkRefTokenArgsMatch = sandBox.match({ values: [refToken] });
+
   afterEach(() => {
     sandBox.restore();
   });
@@ -23,11 +26,12 @@ describe("user/token", () => {
   });
 
   it("fail, when checking refresh token", async () => {
-    sandBox.mock(db).expects("query").once().resolves({ rows: [] });
+    sandBox.mock(db).expects("query").once().withArgs(checkRefTokenArgsMatch)
+      .resolves({ rows: [] });
 
     const res = await chai.request(server)
       .get("/api/user/token")
-      .set("Cookie", "__refToken=test123");
+      .set("Cookie", `__refToken=${refToken}`);
 
     res.should.have.status(403);
 
@@ -35,25 +39,29 @@ describe("user/token", () => {
   });
 
   it("fail authentication because of fake data", async () => {
-    sandBox.mock(db).expects("query").once().resolves({ rows: [{ maxage: 12000 }] });
-    sandBox.mock(jwt).expects("verify").once().throws(new Error("test error"));
+    sandBox.mock(db).expects("query").once().withArgs(checkRefTokenArgsMatch)
+      .resolves({ rows: [{ maxage: 12000 }] });
+    sandBox.mock(jwt).expects("verify").once().withArgs(refToken)
+      .throws(new Error("test error"));
 
     const res = await chai.request(server)
       .get("/api/user/token")
-      .set("Cookie", "__refToken=test123");
+      .set("Cookie", `__refToken=${refToken}`);
 
     res.should.have.status(403);
 
     sandBox.verify();
   });
 
-  it("successful authetication with token", async () => {
-    sandBox.mock(jwt).expects("verify").once().returns({
-      username: "test123",
-      password: "test-password",
-      id: 1,
-    });
-    sandBox.mock(db).expects("query").once().resolves({ rows: [{ maxage: 12000 }] });
+  it("successful authentication with token", async () => {
+    sandBox.mock(jwt).expects("verify").once().withArgs(refToken)
+      .returns({
+        username: "test123",
+        password: "test-password",
+        id: 1,
+      });
+    sandBox.mock(db).expects("query").once().withArgs(checkRefTokenArgsMatch)
+      .resolves({ rows: [{ maxage: 12000 }] });
 
     const res = await chai.request(server)
       .get("/api/user/token")
