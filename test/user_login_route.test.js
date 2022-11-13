@@ -10,12 +10,12 @@ const server = require("../index");
 chai.should();
 chai.use(chaiHttp);
 
-const error = new Error("Test error");
-const username = "Albert";
-const password = "test123";
-
 describe("/user/login", () => {
   let mockDb;
+
+  const error = new Error("Test error");
+  const username = "Albert";
+  const password = "test123";
 
   const loginData = JSON.stringify({
     username,
@@ -23,8 +23,11 @@ describe("/user/login", () => {
   });
 
   beforeEach(() => {
-    sandBox.restore();
     mockDb = sandBox.mock(db);
+  });
+
+  afterEach(() => {
+    sandBox.restore();
   });
 
   it("succesfull login", async () => {
@@ -45,7 +48,8 @@ describe("/user/login", () => {
     res.body.should.have.property("msg").eql("Logged in.");
     res.body.should.have.property("accessToken");
     res.body.should.have.property("refToken");
-    mockDb.verify();
+
+    sandBox.verify();
   });
 
   it("incorrect password, fail login", async () => {
@@ -60,7 +64,8 @@ describe("/user/login", () => {
     res.body.should.have.property("ok").eql(false);
     res.body.should.have.property("auth").eql(false);
     res.body.should.have.property("msg").eql("Incorrect password.");
-    mockDb.verify();
+
+    sandBox.verify();
   });
 
   it("fail login, because user doesn't exist", async () => {
@@ -74,7 +79,8 @@ describe("/user/login", () => {
     res.should.have.status(404);
     res.body.should.have.property("ok").eql(false);
     res.body.should.have.property("msg").eql("User does not exist.");
-    mockDb.verify();
+
+    sandBox.verify();
   });
 
   it("fail login, postgreSQL throws exception", async () => {
@@ -88,6 +94,7 @@ describe("/user/login", () => {
     res.should.have.status(500);
     res.body.should.have.property("ok").eql(false);
     res.body.should.have.property("msg").eql("Internal server error.");
-    mockDb.verify();
+
+    sandBox.verify();
   });
 });
