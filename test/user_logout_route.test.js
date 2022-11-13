@@ -12,6 +12,8 @@ chai.use(chaiHttp);
 describe("/user/logout", () => {
   let mockDb;
 
+  const refToken = "test123";
+  const delTokenArgsMatch = sandBox.match({ values: [refToken] });
   const error = new Error("Test error");
 
   beforeEach(() => {
@@ -23,11 +25,11 @@ describe("/user/logout", () => {
   });
 
   it("fail logout, throw error", async () => {
-    mockDb.expects("query").once().throws(error);
+    mockDb.expects("query").once().withArgs(delTokenArgsMatch).throws(error);
 
     const res = await chai.request(server)
       .post("/api/user/logout")
-      .set("Cookie", "__refToken=test123");
+      .set("Cookie", `__refToken=${refToken}`);
 
     res.should.have.status(500);
     res.body.should.have.property("ok").eql(false);
@@ -37,11 +39,11 @@ describe("/user/logout", () => {
   });
 
   it("successfull logout", async () => {
-    mockDb.expects("query").once().resolves({});
+    mockDb.expects("query").once().withArgs(delTokenArgsMatch).resolves({});
 
     const res = await chai.request(server)
       .post("/api/user/logout")
-      .set("Cookie", "__refToken=test123");
+      .set("Cookie", `__refToken=${refToken}`);
 
     res.should.have.status(200);
     res.body.should.have.property("ok").eql(true);
