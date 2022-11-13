@@ -9,14 +9,17 @@ const server = require("../index");
 chai.should();
 chai.use(chaiHttp);
 
-const error = new Error("Test error");
-
 describe("/user/logout", () => {
   let mockDb;
 
+  const error = new Error("Test error");
+
   beforeEach(() => {
-    sandBox.restore();
     mockDb = sandBox.mock(db);
+  });
+
+  afterEach(() => {
+    sandBox.restore();
   });
 
   it("fail logout, throw error", async () => {
@@ -29,7 +32,8 @@ describe("/user/logout", () => {
     res.should.have.status(500);
     res.body.should.have.property("ok").eql(false);
     res.body.should.have.property("msg").eql("Internal server error.");
-    mockDb.verify();
+
+    sandBox.verify();
   });
 
   it("successfull logout", async () => {
@@ -42,6 +46,7 @@ describe("/user/logout", () => {
     res.should.have.status(200);
     res.body.should.have.property("ok").eql(true);
     res.body.should.have.property("msg").eql("Log out successful.");
-    mockDb.verify();
+
+    sandBox.verify();
   });
 });
