@@ -12,6 +12,12 @@ chai.use(chaiHttp);
 const error = new Error("test error");
 
 describe("/api/advanced_search", () => {
+  let fetchStub;
+
+  beforeEach(() => {
+    fetchStub = sandBox.stub(fetch, "Promise");
+  });
+
   afterEach(() => {
     sandBox.restore();
   });
@@ -27,7 +33,7 @@ describe("/api/advanced_search", () => {
       }),
     };
 
-    sandBox.stub(fetch, "Promise").returns(Promise.resolve(responseObject));
+    fetchStub.returns(Promise.resolve(responseObject));
 
     const res = await chai.request(server)
       .get("/api/advanced_search/region_mapping");
@@ -36,10 +42,12 @@ describe("/api/advanced_search", () => {
     res.body.should.have.property("ok").eql(true);
     res.body.should.have.property("data").have.property("category1").to.be.an("array").eql(fakeCrimes);
     res.body.should.have.property("data").have.property("category2").to.be.an("array").eql(fakeCrimes);
+
+    sandBox.assert.calledOnce(fetchStub);
   });
 
   it("region mapping fail fetch and throw error", async () => {
-    sandBox.stub(fetch, "Promise").throws(error);
+    fetchStub.throws(error);
 
     const res = await chai.request(server)
       .get("/api/advanced_search/region_mapping");
@@ -47,6 +55,8 @@ describe("/api/advanced_search", () => {
     res.should.have.status(500);
     res.body.should.have.property("ok").eql(false);
     res.body.should.have.property("msg").eql("Something went wrong while forwarding the request");
+
+    sandBox.assert.calledOnce(fetchStub);
   });
 
   it("keyword categories valid response", async () => {
@@ -55,7 +65,7 @@ describe("/api/advanced_search", () => {
       json: () => ({ "Slovakia": "sk", "United States": "us" }),
     };
 
-    sandBox.stub(fetch, "Promise").returns(Promise.resolve(responseObject));
+    fetchStub.returns(Promise.resolve(responseObject));
 
     const res = await chai.request(server)
       .get("/api/advanced_search/keyword_categories");
@@ -64,10 +74,12 @@ describe("/api/advanced_search", () => {
     res.body.should.have.property("ok").eql(true);
     res.body.should.have.property("data").have.property("Slovakia").eql("sk");
     res.body.should.have.property("data").have.property("United States").eql("us");
+
+    sandBox.assert.calledOnce(fetchStub);
   });
 
   it("keyword categories fail fetch and throw error", async () => {
-    sandBox.stub(fetch, "Promise").throws(error);
+    fetchStub.throws(error);
 
     const res = await chai.request(server)
       .get("/api/advanced_search/keyword_categories");
@@ -75,5 +87,7 @@ describe("/api/advanced_search", () => {
     res.should.have.status(500);
     res.body.should.have.property("ok").eql(false);
     res.body.should.have.property("msg").eql("Something went wrong while forwarding the request");
+
+    sandBox.assert.calledOnce(fetchStub);
   });
 });
