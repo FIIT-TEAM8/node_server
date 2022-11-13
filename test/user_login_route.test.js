@@ -4,6 +4,7 @@ const sandBox = require("sinon").createSandbox();
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const db = require("../db/postgres");
 const server = require("../index");
 
@@ -14,8 +15,10 @@ describe("/user/login", () => {
   let mockDb;
 
   const error = new Error("Test error");
+  const userId = 1;
   const username = "Albert";
   const password = "test123";
+  const getUserArgsMatch = sandBox.match({ values: [username] });
 
   const loginData = JSON.stringify({
     username,
@@ -31,11 +34,26 @@ describe("/user/login", () => {
   });
 
   it("succesfull login", async () => {
+    const defaultMaxAge = 86400;
+    const refreshToken = "27a7c3b92385425199c6edfe771b24e3";
+    const accessToken = "a529a756858f079b7859a246d90644b5";
     const hashedPassword = await bcrypt.hash(password, 10).then();
     // returns user's hashed password
-    mockDb.expects("query").once().resolves({ rows: [{ password: hashedPassword }] });
+    mockDb.expects("query").once().withArgs(getUserArgsMatch)
+      .resolves({ rows: [{ id: userId, username, password: hashedPassword }] });
+
+    const mockJWT = sandBox.mock(jwt);
+    mockJWT.expects("sign").once().withArgs(
+      { username, id: userId },
+    ).returns(accessToken);
+    mockJWT.expects("sign").once().withArgs(
+      { username, id: userId },
+    ).returns(refreshToken);
+
     // mock insert refresh token
-    mockDb.expects("query").once().resolves({ rows: [{ id: 1 }] });
+    mockDb.expects("query").once().withArgs(sandBox.match({
+      values: [refreshToken, defaultMaxAge],
+    })).resolves({ rows: [{ id: 1 }] });
 
     const res = await chai.request(server)
       .post("/api/user/login")
@@ -46,14 +64,17 @@ describe("/user/login", () => {
     res.body.should.have.property("ok").eql(true);
     res.body.should.have.property("auth").eql(true);
     res.body.should.have.property("msg").eql("Logged in.");
-    res.body.should.have.property("accessToken");
-    res.body.should.have.property("refToken");
+    res.body.should.have.property("accessToken").eql(accessToken);
+    res.body.should.have.property("refToken").eql(refreshToken);
+    res.should.have.cookie("__authToken", accessToken);
+    res.should.have.cookie("__refToken", refreshToken);
 
     sandBox.verify();
   });
 
   it("incorrect password, fail login", async () => {
-    mockDb.expects("query").once().resolves({ rows: [{ password }] });
+    mockDb.expects("query").once().withArgs(getUserArgsMatch)
+      .resolves({ rows: [{ password }] });
 
     const res = await chai.request(server)
       .post("/api/user/login")
@@ -69,7 +90,7 @@ describe("/user/login", () => {
   });
 
   it("fail login, because user doesn't exist", async () => {
-    mockDb.expects("query").once().resolves({});
+    mockDb.expects("query").once().withArgs(getUserArgsMatch).resolves({});
 
     const res = await chai.request(server)
       .post("/api/user/login")
@@ -84,7 +105,7 @@ describe("/user/login", () => {
   });
 
   it("fail login, postgreSQL throws exception", async () => {
-    mockDb.expects("query").once().throws(error);
+    mockDb.expects("query").once().withArgs(getUserArgsMatch).throws(error);
 
     const res = await chai.request(server)
       .post("/api/user/login")
