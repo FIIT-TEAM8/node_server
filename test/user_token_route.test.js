@@ -18,14 +18,14 @@ describe("user/token", () => {
     sandBox.restore();
   });
 
-  it("fail, beacause of missing token", async () => {
+  it("/user/token fail missing token", async () => {
     const res = await chai.request(server)
       .get("/api/user/token");
 
     res.should.have.status(401);
   });
 
-  it("fail, when checking refresh token", async () => {
+  it("/user/token wrong checking refresh token", async () => {
     sandBox.mock(db).expects("query").once().withArgs(checkRefTokenArgsMatch)
       .resolves({ rows: [] });
 
@@ -38,7 +38,7 @@ describe("user/token", () => {
     sandBox.verify();
   });
 
-  it("fail authentication because of fake data", async () => {
+  it("/user/token fail authentication with fake data", async () => {
     sandBox.mock(db).expects("query").once().withArgs(checkRefTokenArgsMatch)
       .resolves({ rows: [{ maxage: 12000 }] });
     sandBox.mock(jwt).expects("verify").once().withArgs(refToken)
@@ -53,7 +53,7 @@ describe("user/token", () => {
     sandBox.verify();
   });
 
-  it("successful authentication with token", async () => {
+  it("/user/token successful authentication", async () => {
     sandBox.mock(jwt).expects("verify").once().withArgs(refToken)
       .returns({
         username: "test123",

@@ -33,7 +33,7 @@ describe("/api/user/login", () => {
     sandBox.restore();
   });
 
-  it("succesfull login", async () => {
+  it("/user/login successful login", async () => {
     const defaultMaxAge = 86400;
     const refreshToken = "27a7c3b92385425199c6edfe771b24e3";
     const accessToken = "a529a756858f079b7859a246d90644b5";
@@ -72,7 +72,7 @@ describe("/api/user/login", () => {
     sandBox.verify();
   });
 
-  it("incorrect password, fail login", async () => {
+  it("/user/login incorrect password fail login", async () => {
     mockDb.expects("query").once().withArgs(getUserArgsMatch)
       .resolves({ rows: [{ password }] });
 
@@ -89,7 +89,7 @@ describe("/api/user/login", () => {
     sandBox.verify();
   });
 
-  it("fail login, because user doesn't exist", async () => {
+  it("/user/login fail login user doesn't exist", async () => {
     mockDb.expects("query").once().withArgs(getUserArgsMatch).resolves({});
 
     const res = await chai.request(server)
@@ -104,7 +104,7 @@ describe("/api/user/login", () => {
     sandBox.verify();
   });
 
-  it("fail login, postgreSQL throws exception", async () => {
+  it("/user/login fail login db throws error", async () => {
     mockDb.expects("query").once().withArgs(getUserArgsMatch).throws(error);
 
     const res = await chai.request(server)

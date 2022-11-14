@@ -42,7 +42,7 @@ describe("/api/report/create", () => {
     sandBox.restore();
   });
 
-  it("create report failed, db didn't return report id", async () => {
+  it("/report/create fail report creation db doesn't return report id", async () => {
     mockDb.expects("query").once().withArgs(insertReportArgsMatch).resolves({});
 
     const res = await chai.request(server)
@@ -57,7 +57,7 @@ describe("/api/report/create", () => {
     sandBox.verify();
   });
 
-  it("create report failed, db throw error", async () => {
+  it("/report/create fail report creation db throw error", async () => {
     mockDb.expects("query").once().withArgs(insertReportArgsMatch).throws(error);
 
     const res = await chai.request(server)
@@ -72,7 +72,7 @@ describe("/api/report/create", () => {
     sandBox.verify();
   });
 
-  it("report was successfully created", async () => {
+  it("/report/create report successfully created", async () => {
     mockDb.expects("query").once().withArgs(insertReportArgsMatch).resolves({ rows: [{ id: 1 }] });
 
     const res = await chai.request(server)

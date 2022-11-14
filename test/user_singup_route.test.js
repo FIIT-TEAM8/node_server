@@ -32,7 +32,7 @@ describe("/user/signup", () => {
     sandBox.restore();
   });
 
-  it("user already exists", async () => {
+  it("/user/singup user already exists", async () => {
     // mock inspiration: https://sinonjs.org/releases/latest/mocks/#expectations
     mockDb.expects("query").once().withArgs(insertUserArgsMatch).resolves({});
 
@@ -48,7 +48,7 @@ describe("/user/signup", () => {
     sandBox.verify();
   });
 
-  it("successfull singup", async () => {
+  it("/user/signup successfull singup", async () => {
     const defaultMaxAge = 86400;
     const refreshToken = "27a7c3b92385425199c6edfe771b24e3";
     const accessToken = "a529a756858f079b7859a246d90644b5";
@@ -85,7 +85,7 @@ describe("/user/signup", () => {
     sandBox.verify();
   });
 
-  it("fail signup, throw execption", async () => {
+  it("/user/singup fail signup db throw error", async () => {
     mockDb.expects("query").once().withArgs(insertUserArgsMatch).throws(error);
 
     const res = await chai.request(server)

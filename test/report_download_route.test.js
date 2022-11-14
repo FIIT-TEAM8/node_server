@@ -66,7 +66,7 @@ describe("/api/report/download", () => {
     sandBox.restore();
   });
 
-  it("download failed, because of missing arguments", async () => {
+  it("/report/download download fail missing required data in body", async () => {
     const res = await chai.request(server)
       .post("/api/report/download")
       .set("Cookie", `__authToken=${authToken}`)
@@ -79,7 +79,7 @@ describe("/api/report/download", () => {
     sandBox.verify();
   });
 
-  it("download failed, because of missing results in data API response", async () => {
+  it("/report/download download fail missing results in external API response", async () => {
     const responseObject = {
       json: () => ({}),
     };
@@ -101,7 +101,7 @@ describe("/api/report/download", () => {
     sandBox.verify();
   });
 
-  it("download failed, because request on data API throws error", async () => {
+  it("/report/download download fail request on external API throws error", async () => {
     sandBox.stub(fetch, "Promise").throws(error);
 
     const res = await chai.request(server)
@@ -119,7 +119,7 @@ describe("/api/report/download", () => {
     sandBox.verify();
   });
 
-  it("successfully generated and downloaded PDF from articles in report", async () => {
+  it("/report/download successfully generated and downloaded PDF from report", async () => {
     const responseObject = {
       json: () => (fakeResults),
     };

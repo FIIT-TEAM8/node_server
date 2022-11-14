@@ -41,7 +41,7 @@ describe("/api/report/:user_id", () => {
     sandBox.restore();
   });
 
-  it("/:user_id fail getting report from db", async () => {
+  it("/report/:user_id fail getting report from db", async () => {
     mockDb.expects("query").once().withArgs(getReportArgsMatch).resolves({ rows: [] });
 
     const res = await chai.request(server)
@@ -55,7 +55,7 @@ describe("/api/report/:user_id", () => {
     sandBox.verify();
   });
 
-  it("/:user_id fail getting report, throw execption", async () => {
+  it("/report/:user_id fail getting report throw error", async () => {
     mockDb.expects("query").once().withArgs(getReportArgsMatch).throws(error);
 
     const res = await chai.request(server)
@@ -68,7 +68,7 @@ describe("/api/report/:user_id", () => {
     sandBox.verify();
   });
 
-  it("/:user_id successfully returned report data", async () => {
+  it("/report/:user_id successfully returned report data", async () => {
     mockDb.expects("query").once().withArgs(getReportArgsMatch).resolves({
       rows: [{ id: 1, content: fakeArticlesInReport }],
     });

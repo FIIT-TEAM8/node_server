@@ -20,7 +20,7 @@ describe("/api/data/search", () => {
     sandBox.restore();
   });
 
-  it("valid response with fake data", async () => {
+  it("/data/search valid response with fake data", async () => {
     const fakeArticleData = {
       _id: "627341fb4ec0a74b7ab83632",
       keywords: ["test"],
@@ -68,7 +68,7 @@ describe("/api/data/search", () => {
     sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("fail fetch and throw error", async () => {
+  it("/data/search fail fetch throw error", async () => {
     const error = new Error("Test error");
     // source https://stackoverflow.com/questions/39387822/how-to-handle-sinon-stub-throws-in-unit-test-by-sinon-js
     fetchStub.throws(error);
@@ -95,7 +95,7 @@ describe("/api/data/report", () => {
     sandBox.restore();
   });
 
-  it("valid response with data", async () => {
+  it("/data/report valid response with fake data", async () => {
     const fakeArticleData = {
       _id: "6239b1eddf4b7decb33fbaf2",
       html: "scraped html",
@@ -130,7 +130,7 @@ describe("/api/data/report", () => {
     sandBox.assert.calledOnce(fetchStub);
   });
 
-  it("fail fetch, throw exception", async () => {
+  it("/data/report fail fetch throw error", async () => {
     const error = new Error("Test error");
     fetchStub.throws(error);
 

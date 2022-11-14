@@ -24,7 +24,7 @@ describe("/user/logout", () => {
     sandBox.restore();
   });
 
-  it("fail logout, throw error", async () => {
+  it("/user/logout fail logout db throw error", async () => {
     mockDb.expects("query").once().withArgs(delTokenArgsMatch).throws(error);
 
     const res = await chai.request(server)
@@ -38,7 +38,7 @@ describe("/user/logout", () => {
     sandBox.verify();
   });
 
-  it("successfull logout", async () => {
+  it("/user/logout successful logout", async () => {
     mockDb.expects("query").once().withArgs(delTokenArgsMatch).resolves({});
 
     const res = await chai.request(server)

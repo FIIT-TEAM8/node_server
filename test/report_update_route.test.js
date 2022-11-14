@@ -44,7 +44,7 @@ describe("/api/report/update/:id", () => {
     sandBox.restore();
   });
 
-  it("update report failed, because db didn't return id", async () => {
+  it("/report/update/:id update fail db doesn't return report id", async () => {
     mockDb.expects("query").once().withArgs(updateReportArgsMatch).resolves({ rowCount: 0 });
 
     const res = await chai.request(server)
@@ -59,7 +59,7 @@ describe("/api/report/update/:id", () => {
     sandBox.verify();
   });
 
-  it("update report failed, db threw error", async () => {
+  it("/report/update/:id update fail db throw error", async () => {
     mockDb.expects("query").once().withArgs(updateReportArgsMatch).throws(error);
 
     const res = await chai.request(server)
@@ -74,7 +74,7 @@ describe("/api/report/update/:id", () => {
     sandBox.verify();
   });
 
-  it("report was successfully update", async () => {
+  it("/report/update/:id report successfully updated", async () => {
     mockDb.expects("query").once().withArgs(updateReportArgsMatch).resolves({ rowCount: 1 });
 
     const res = await chai.request(server)
